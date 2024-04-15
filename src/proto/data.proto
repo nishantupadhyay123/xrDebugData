@@ -1,0 +1,82 @@
+/* ----------------------------------------------------------------------------
+* xr_debug_data.proto - XR debug data protobuf definitions
+* Arpil 2024,Copyright (c) 2016 by Cisco Systems, Inc.
+* ----------------------------------------------------------------------------
+*/
+
+syntax = "proto3";
+
+package xrbinary;
+option go_package = "../src/xrbinarypb";
+
+// xr_debug message is the outer payload for streaming data from
+// xr devices related to debug area. Debug data provides a mechanism 
+// to exteernal listeners of database + Apps to run live applications 
+// for finding faults at run time which is offloaded from IOS-XR 
+// limited RAM and CPU system.
+
+message XrDebugData {
+
+// host_id representation of where the information being transmitted.
+
+
+oneof host_id {
+    // host_name : ios-xr hostname.
+    string host_name = 1;
+    // host_uuid : mostly use ethernet mac_address + any other parameter used to create UUID.
+    string host_uuid = 2 ;
+    //Add  string rp_mac_address = 3;   //rp ethernet mac address/
+    }
+
+// Any identifier used by ios-xr to indicate that it is part of any particular config , 
+// partiuclar test or any other paramater deemed necessary by ios-xr system
+string stream_id = 3 ;
+
+
+// All enums must have a default 
+enum message_type {
+    UNSPECIFIED = 0;
+    LTRACE = 1 ;
+    SYSLOG = 2 ;
+    SHOWTECH = 3 ;
+    // decoder 
+    // binary
+}
+
+// Message type is defined as the data for which different decoding mechansim 
+// can be applied at client
+message_type msg_type = 4;
+
+XrLtrace ltrace = 5; 
+
+}
+
+message XrLtrace {
+    // RP or LC name or RP and LC nodeid within the system
+    oneof node {
+        // decoded string name of the node.
+        string node_name = 1;
+        // xr internal node_id 
+        int32 node_id = 2 ;
+    }
+    repeated ProcessTrace ltrace = 3 ;
+}
+message ProcessTrace {
+    // provide event_type as seperate optional field
+     string event_type = 1;
+    // provides data in string or bytes format
+    oneof data {
+        bytes msg_data = 2 ;
+        string msg = 3 ;
+    }
+}
+
+//1. code generate 
+//  1.1 for go first -- DONE
+//  1.2 for cplus -- DONE
+//2. server and client read from disk , trasnmit , receiver and write to disk.(TCP)-- IN PROGRESS.
+//3. how to plumb this in XR 
+//4. how to plumb this in telegraf or standaline pipeline
+
+// 30 days fireX standard 
+//  Cafy apps and backend and run logs.
