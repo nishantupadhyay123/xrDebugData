@@ -15,6 +15,7 @@ option go_package = "../src/xrbinarypb";
 // for finding faults at run time which is offloaded from IOS-XR 
 // limited RAM and CPU system.
 
+
 message XrDebugData {
 
 // host_id representation of where the information being transmitted.
@@ -70,6 +71,18 @@ message ProcessTrace {
         string msg = 3 ;
     }
 }
+
+message XrDebugResponse {
+    bool result = 1; 
+}
+
+service LtraceUploadService {
+
+    //client side streaming supported.
+    rpc LongUpload(stream XrDebugData) returns (XrDebugResponse) {};
+}
+
+
 
 //1. code generate 
 //  1.1 for go first -- DONE
