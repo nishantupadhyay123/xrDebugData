@@ -17,8 +17,10 @@ import (
 	"sync"
 	"text/scanner"
 
+	"github.com/golang/protobuf/protoc-gen-go/grpc"
 	"github.com/influxdata/telegraf"
 	"github.com/influxdata/telegraf/plugins/inputs"
+	"google.golang.org/grpc"
 )
 
 type  XrDebugData struct {
@@ -30,6 +32,7 @@ type  XrDebugData struct {
 	// TCP related configuration
 	AllowedPendingMessages int `toml:"allowed_pending_messages"`
 	MaxTCPConnections      int `toml:"max_tcp_connections"`
+	
 
 	// Internal state 
 	all_conn     []*net.Conn
@@ -39,6 +42,8 @@ type  XrDebugData struct {
 	wg    		   sync.WaitGroup			
 }
 
+type server struct{}
+
 // refrenced to https://pkg.go.dev/github.com/influxdata/telegraf#ServiceInput 
 
 func (x *XrDebugData) Start (acc telegraf.Accumulator) error {
@@ -46,17 +51,30 @@ func (x *XrDebugData) Start (acc telegraf.Accumulator) error {
 	x.acc = acc
 	x.ctx, x.cancel = context.WithCancel(context.Background())
 
-	// Currently support TCP only. In future Add 
-	if x.Transport != "TCP" {
-		return fmt.Errorf("E! Invalid  transport for XrDebugData: %s", x.Transport)
+	switch x.Transport {
+	case "TCP":
+		x.listner, err = net.Listen("tcp", x.serviceAddress)
+		if err != nil {
+			return err
+		}
+		x.wg.Add(1)
+		go x.acceptTCPClients()
+		log.Printf(" Start the xrDebug Plugin at : %s", x.serviceAddress)
+	case "GRPC":
+
+		// Initialize grpC server.
+		x.listner, err = net.Listen("tcp", x.serviceAddress)
+		if err != nil {
+			return err
+		}
+		//no TLS supported as of now but just creating blank.
+		opts := []grpc.ServerOption{}
+		s := grpc.NewServer(opts...)
+		
+
+
 	}
-	x.listner, err = net.Listen("tcp", x.serviceAddress)
-	if err != nil {
-		return err
-	}
-	x.wg.Add(1)
-	go x.acceptTCPClients() // Add the function for netaddress and multiple 
-	log.Printf(" Start the xrDebug Plugin at : %s", x.serviceAddress)
+	
 	return nil
 }
 
