@@ -7,7 +7,7 @@
 package XrDebugData
 
 import (
-	"XrBinary/src/xrbinarysrvpb"
+	"github.com/nishantupadhyay123/xrDebugData/src/xrbinarysrvpb"
 	"bufio"
 	"bytes"
 	"context"
@@ -17,7 +17,6 @@ import (
 	"net"
 	"sync"
 	"text/scanner"
-	"xrbinarysrvpb"
 
 	"github.com/golang/protobuf/protoc-gen-go/grpc"
 	"github.com/influxdata/telegraf"

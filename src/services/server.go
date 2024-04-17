@@ -1,14 +1,12 @@
 package main
 
 import (
-	"XrBinary/src/xrbinarysrvpb"
+	"github.com/nishantupadhyay123/xrDebugData/src/xrbinarysrvpb"
 	"context"
 	"fmt"
 	"log"
 	"net"
-	"xrbinarypb"
-	"xrbinarysrvpb"
-
+	"github.com/nishantupadhyay123/xrDebugData/src/xrbinarypb"
 	"github.com/docker/docker/api/server/router/grpc"
 	"google.golang.org/grpc"
 )
