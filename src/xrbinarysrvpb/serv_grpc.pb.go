@@ -24,7 +24,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UploadService_UploadRequest_FullMethodName = "/xrbinaryserv.UploadService/UploadRequest"
+	UploadService_UploadRequest_FullMethodName = "/xrbinary.UploadService/UploadRequest"
 )
 
 // UploadServiceClient is the client API for UploadService service.
@@ -136,7 +136,7 @@ func (x *uploadServiceUploadRequestServer) Recv() (*XrDebugRequest, error) {
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var UploadService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "xrbinaryserv.UploadService",
+	ServiceName: "xrbinary.UploadService",
 	HandlerType: (*UploadServiceServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
