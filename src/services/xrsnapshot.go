@@ -7,6 +7,7 @@
 package XrDebugData
 
 import (
+	"XrBinary/src/xrbinarysrvpb"
 	"bufio"
 	"bytes"
 	"context"
@@ -16,6 +17,7 @@ import (
 	"net"
 	"sync"
 	"text/scanner"
+	"xrbinarysrvpb"
 
 	"github.com/golang/protobuf/protoc-gen-go/grpc"
 	"github.com/influxdata/telegraf"
@@ -42,7 +44,9 @@ type  XrDebugData struct {
 	wg    		   sync.WaitGroup			
 }
 
-type server struct{}
+type server struct{
+	*xrbinarysrvpb.UnimplementedUploadServiceServer
+}
 
 // refrenced to https://pkg.go.dev/github.com/influxdata/telegraf#ServiceInput 
 
@@ -60,19 +64,20 @@ func (x *XrDebugData) Start (acc telegraf.Accumulator) error {
 		x.wg.Add(1)
 		go x.acceptTCPClients()
 		log.Printf(" Start the xrDebug Plugin at : %s", x.serviceAddress)
-	case "GRPC":
 
+	case "GRPC":
+		var opts []grpc.ServerOption
 		// Initialize grpC server.
 		x.listner, err = net.Listen("tcp", x.serviceAddress)
 		if err != nil {
 			return err
 		}
-		//no TLS supported as of now but just creating blank.
-		opts := []grpc.ServerOption{}
-		s := grpc.NewServer(opts...)
-		
-
-
+		//no TLS supported as of now but just creating blank
+		x.wg.Add(1)
+		go func() {
+			grpcserver := grpc.NewServer(opts...)
+			xrbinarysrvpb.RegisterUploadServiceServer(grpcserver, &server{})	
+		}()
 	}
 	
 	return nil

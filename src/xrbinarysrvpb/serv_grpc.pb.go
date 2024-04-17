@@ -24,49 +24,49 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	LtraceUploadService_LongUploadRequest_FullMethodName = "/xrbinaryserv.LtraceUploadService/LongUploadRequest"
+	UploadService_UploadRequest_FullMethodName = "/xrbinaryserv.UploadService/UploadRequest"
 )
 
-// LtraceUploadServiceClient is the client API for LtraceUploadService service.
+// UploadServiceClient is the client API for UploadService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type LtraceUploadServiceClient interface {
+type UploadServiceClient interface {
 	// client side streaming supported.
-	LongUploadRequest(ctx context.Context, opts ...grpc.CallOption) (LtraceUploadService_LongUploadRequestClient, error)
+	UploadRequest(ctx context.Context, opts ...grpc.CallOption) (UploadService_UploadRequestClient, error)
 }
 
-type ltraceUploadServiceClient struct {
+type uploadServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewLtraceUploadServiceClient(cc grpc.ClientConnInterface) LtraceUploadServiceClient {
-	return &ltraceUploadServiceClient{cc}
+func NewUploadServiceClient(cc grpc.ClientConnInterface) UploadServiceClient {
+	return &uploadServiceClient{cc}
 }
 
-func (c *ltraceUploadServiceClient) LongUploadRequest(ctx context.Context, opts ...grpc.CallOption) (LtraceUploadService_LongUploadRequestClient, error) {
-	stream, err := c.cc.NewStream(ctx, &LtraceUploadService_ServiceDesc.Streams[0], LtraceUploadService_LongUploadRequest_FullMethodName, opts...)
+func (c *uploadServiceClient) UploadRequest(ctx context.Context, opts ...grpc.CallOption) (UploadService_UploadRequestClient, error) {
+	stream, err := c.cc.NewStream(ctx, &UploadService_ServiceDesc.Streams[0], UploadService_UploadRequest_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &ltraceUploadServiceLongUploadRequestClient{stream}
+	x := &uploadServiceUploadRequestClient{stream}
 	return x, nil
 }
 
-type LtraceUploadService_LongUploadRequestClient interface {
+type UploadService_UploadRequestClient interface {
 	Send(*XrDebugRequest) error
 	CloseAndRecv() (*XrDebugResponse, error)
 	grpc.ClientStream
 }
 
-type ltraceUploadServiceLongUploadRequestClient struct {
+type uploadServiceUploadRequestClient struct {
 	grpc.ClientStream
 }
 
-func (x *ltraceUploadServiceLongUploadRequestClient) Send(m *XrDebugRequest) error {
+func (x *uploadServiceUploadRequestClient) Send(m *XrDebugRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *ltraceUploadServiceLongUploadRequestClient) CloseAndRecv() (*XrDebugResponse, error) {
+func (x *uploadServiceUploadRequestClient) CloseAndRecv() (*XrDebugResponse, error) {
 	if err := x.ClientStream.CloseSend(); err != nil {
 		return nil, err
 	}
@@ -77,54 +77,54 @@ func (x *ltraceUploadServiceLongUploadRequestClient) CloseAndRecv() (*XrDebugRes
 	return m, nil
 }
 
-// LtraceUploadServiceServer is the server API for LtraceUploadService service.
-// All implementations must embed UnimplementedLtraceUploadServiceServer
+// UploadServiceServer is the server API for UploadService service.
+// All implementations must embed UnimplementedUploadServiceServer
 // for forward compatibility
-type LtraceUploadServiceServer interface {
+type UploadServiceServer interface {
 	// client side streaming supported.
-	LongUploadRequest(LtraceUploadService_LongUploadRequestServer) error
-	mustEmbedUnimplementedLtraceUploadServiceServer()
+	UploadRequest(UploadService_UploadRequestServer) error
+	mustEmbedUnimplementedUploadServiceServer()
 }
 
-// UnimplementedLtraceUploadServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedLtraceUploadServiceServer struct {
+// UnimplementedUploadServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedUploadServiceServer struct {
 }
 
-func (UnimplementedLtraceUploadServiceServer) LongUploadRequest(LtraceUploadService_LongUploadRequestServer) error {
-	return status.Errorf(codes.Unimplemented, "method LongUploadRequest not implemented")
+func (UnimplementedUploadServiceServer) UploadRequest(UploadService_UploadRequestServer) error {
+	return status.Errorf(codes.Unimplemented, "method UploadRequest not implemented")
 }
-func (UnimplementedLtraceUploadServiceServer) mustEmbedUnimplementedLtraceUploadServiceServer() {}
+func (UnimplementedUploadServiceServer) mustEmbedUnimplementedUploadServiceServer() {}
 
-// UnsafeLtraceUploadServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to LtraceUploadServiceServer will
+// UnsafeUploadServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UploadServiceServer will
 // result in compilation errors.
-type UnsafeLtraceUploadServiceServer interface {
-	mustEmbedUnimplementedLtraceUploadServiceServer()
+type UnsafeUploadServiceServer interface {
+	mustEmbedUnimplementedUploadServiceServer()
 }
 
-func RegisterLtraceUploadServiceServer(s grpc.ServiceRegistrar, srv LtraceUploadServiceServer) {
-	s.RegisterService(&LtraceUploadService_ServiceDesc, srv)
+func RegisterUploadServiceServer(s grpc.ServiceRegistrar, srv UploadServiceServer) {
+	s.RegisterService(&UploadService_ServiceDesc, srv)
 }
 
-func _LtraceUploadService_LongUploadRequest_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(LtraceUploadServiceServer).LongUploadRequest(&ltraceUploadServiceLongUploadRequestServer{stream})
+func _UploadService_UploadRequest_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UploadServiceServer).UploadRequest(&uploadServiceUploadRequestServer{stream})
 }
 
-type LtraceUploadService_LongUploadRequestServer interface {
+type UploadService_UploadRequestServer interface {
 	SendAndClose(*XrDebugResponse) error
 	Recv() (*XrDebugRequest, error)
 	grpc.ServerStream
 }
 
-type ltraceUploadServiceLongUploadRequestServer struct {
+type uploadServiceUploadRequestServer struct {
 	grpc.ServerStream
 }
 
-func (x *ltraceUploadServiceLongUploadRequestServer) SendAndClose(m *XrDebugResponse) error {
+func (x *uploadServiceUploadRequestServer) SendAndClose(m *XrDebugResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *ltraceUploadServiceLongUploadRequestServer) Recv() (*XrDebugRequest, error) {
+func (x *uploadServiceUploadRequestServer) Recv() (*XrDebugRequest, error) {
 	m := new(XrDebugRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -132,17 +132,17 @@ func (x *ltraceUploadServiceLongUploadRequestServer) Recv() (*XrDebugRequest, er
 	return m, nil
 }
 
-// LtraceUploadService_ServiceDesc is the grpc.ServiceDesc for LtraceUploadService service.
+// UploadService_ServiceDesc is the grpc.ServiceDesc for UploadService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var LtraceUploadService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "xrbinaryserv.LtraceUploadService",
-	HandlerType: (*LtraceUploadServiceServer)(nil),
+var UploadService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "xrbinaryserv.UploadService",
+	HandlerType: (*UploadServiceServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "LongUploadRequest",
-			Handler:       _LtraceUploadService_LongUploadRequest_Handler,
+			StreamName:    "UploadRequest",
+			Handler:       _UploadService_UploadRequest_Handler,
 			ClientStreams: true,
 		},
 	},

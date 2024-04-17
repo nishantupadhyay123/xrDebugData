@@ -9,24 +9,24 @@ package xrbinaryserv;
 option go_package = "../src/xrbinarysrvpb";
 
 message XrDebugRequest {
-    int64 ReqID = 1;
+    int64 reqid = 1;
     bytes data = 2 ;
     string errors = 3;
-    DecodePath decoder = 4; 
+    string decoder = 4; 
 }
 
-message DecodePath {
-    string workspace = 1;
-    string binary = 2;
-}
+// message DecodePath {
+//     string workspace = 1;
+//     string binary = 2;
+// }
 
 message XrDebugResponse {
     bool result = 1; 
     string error =2 ;
 }
 
-service LtraceUploadService {
+service UploadService {
 
     //client side streaming supported.
-    rpc LongUploadRequest(stream XrDebugRequest) returns (XrDebugResponse) {};
+    rpc UploadRequest(stream XrDebugRequest) returns (XrDebugResponse) {};
 }
