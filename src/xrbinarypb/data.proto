@@ -72,17 +72,6 @@ message ProcessTrace {
     }
 }
 
-message XrDebugResponse {
-    bool result = 1; 
-}
-
-service LtraceUploadService {
-
-    //client side streaming supported.
-    rpc LongUpload(stream XrDebugData) returns (XrDebugResponse) {};
-}
-
-
 
 //1. code generate 
 //  1.1 for go first -- DONE

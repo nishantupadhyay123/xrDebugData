@@ -1,0 +1,32 @@
+/* ----------------------------------------------------------------------------
+* xr_debug_data.proto - XR debug data protobuf definitions
+* Arpil 2024,Copyright (c) 2016 by Cisco Systems, Inc.
+* ----------------------------------------------------------------------------
+*/
+syntax="proto3";
+
+package xrbinaryserv;
+option go_package = "../src/xrbinarysrvpb";
+
+message XrDebugRequest {
+    int64 ReqID = 1;
+    bytes data = 2 ;
+    string errors = 3;
+    DecodePath decoder = 4; 
+}
+
+message DecodePath {
+    string workspace = 1;
+    string binary = 2;
+}
+
+message XrDebugResponse {
+    bool result = 1; 
+    string error =2 ;
+}
+
+service LtraceUploadService {
+
+    //client side streaming supported.
+    rpc LongUploadRequest(stream XrDebugRequest) returns (XrDebugResponse) {};
+}
