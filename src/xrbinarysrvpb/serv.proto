@@ -5,7 +5,7 @@
 */
 syntax="proto3";
 
-package xrbinary;
+package xrbinarysrv;
 option go_package = "../src/xrbinarysrvpb";
 
 message XrDebugRequest {
@@ -26,7 +26,6 @@ message XrDebugResponse {
 }
 
 service UploadService {
-
     //client side streaming supported.
-    rpc UploadRequest(stream XrDebugRequest) returns (XrDebugResponse) {};
+    rpc UploadRequest (stream XrDebugRequest) returns (XrDebugResponse) {};
 }

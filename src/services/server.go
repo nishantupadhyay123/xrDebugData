@@ -1,24 +1,39 @@
 package main
 
 import (
-	"github.com/nishantupadhyay123/xrDebugData/src/xrbinarysrvpb"
-	"context"
+	pb "github.com/nishantupadhyay123/xrDebugData/src/xrbinarysrvpb"
 	"fmt"
 	"log"
 	"net"
-	"github.com/nishantupadhyay123/xrDebugData/src/xrbinarypb"
-	"github.com/docker/docker/api/server/router/grpc"
 	"google.golang.org/grpc"
+	"io"
 )
 type server struct {
-	xrbinarysrvpb.UnimplementedUploadServiceServer
+	pb.UnimplementedUploadServiceServer
 }
 
-func (s *server) UploadRequest( ctx context.Context , req *xrbinarysrvpb.XrDebugRequest) (*xrbinarysrvpb.XrDebugResponse, error){
-	fmt.Println("something")
-	return &xrbinarysrvpb.XrDebugResponse{Result: true,Error: "None"}, nil
-}
 
+func (*server) UploadRequest(stream pb.UploadService_UploadRequestServer) error {
+	fmt.Printf("UploadRequest function was invoked with a streaming request\n")
+	result := false
+	for {
+		req, err := stream.Recv()
+		if err == io.EOF {
+			// we have finished reading the client stream
+			return stream.SendAndClose(&pb.XrDebugResponse{
+				Result: result,
+				Error: "none",
+			})
+		}
+		if err != nil {
+			log.Fatalf("Error while reading client stream: %v", err)
+		}
+
+		request_id := req.GetReqid()
+		fmt.Println(" The requestid is %v", request_id)
+		result = true
+	}
+}
 func main () {
 	server_port := "50051"
 	server_ip := "0.0.0.0"
@@ -28,7 +43,7 @@ func main () {
 		log.Fatalf("failed to start server on : %v", err)
 	}
 	s := grpc.NewServer()
-	xrbinarysrvpb.RegisterUploadServiceServer(s, &server{} )
+	pb.RegisterUploadServiceServer(s, &server{})
 	log.Printf("server listening at %v", listner.Addr())
 	if err := s.Serve(listner); err != nil {
 		log.Fatalf("Failer to server GRPC %v", err)
