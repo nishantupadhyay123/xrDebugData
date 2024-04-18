@@ -7,7 +7,7 @@
 syntax = "proto3";
 
 package xrbinary;
-option go_package = "github.com/nishantupadhyay123/xrDebugData/src/xrbinarypb";
+option go_package = "../src/xrbinarypb";
 
 // xr_debug message is the outer payload for streaming data from
 // xr devices related to debug area. Debug data provides a mechanism 
