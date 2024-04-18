@@ -7,7 +7,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v3.5.0
-// source: src/xrbinarysrvpb/serv.proto
+// source: serv.proto
 
 package xrbinarysrvpb
 
@@ -24,7 +24,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UploadService_UploadRequest_FullMethodName = "/xrbinary.UploadService/UploadRequest"
+	UploadService_UploadRequest_FullMethodName = "/xrbinarysrv.UploadService/UploadRequest"
 )
 
 // UploadServiceClient is the client API for UploadService service.
@@ -136,7 +136,7 @@ func (x *uploadServiceUploadRequestServer) Recv() (*XrDebugRequest, error) {
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var UploadService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "xrbinary.UploadService",
+	ServiceName: "xrbinarysrv.UploadService",
 	HandlerType: (*UploadServiceServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
@@ -146,5 +146,5 @@ var UploadService_ServiceDesc = grpc.ServiceDesc{
 			ClientStreams: true,
 		},
 	},
-	Metadata: "src/xrbinarysrvpb/serv.proto",
+	Metadata: "serv.proto",
 }
