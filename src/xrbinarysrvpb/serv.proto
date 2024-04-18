@@ -6,7 +6,7 @@
 syntax="proto3";
 
 package xrbinary;
-option go_package = "github.com/nishantupadhyay123/xrDebugData/src/xrbinarysrvpb";
+option go_package = "../src/xrbinarysrvpb";
 
 message XrDebugRequest {
     int64 reqid = 1;
