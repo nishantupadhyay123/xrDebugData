@@ -30,21 +30,22 @@ func (*server) UploadRequest(stream pb.UploadService_UploadRequestServer) error 
 		}
 
 		request_id := req.GetReqid()
-		fmt.Println(" The requestid is %v", request_id)
+		fmt.Printf(" The requestid is %v\n", request_id)
+		fmt.Printf("The message is %v\n\n", req)
 		result = true
 	}
 }
 func main () {
 	server_port := "50051"
 	server_ip := "0.0.0.0"
-	fmt.Printf("starting gRPC server %s at %s " , server_ip, server_port)
+	log.Printf("starting gRPC server %s at %s \n" , server_ip, server_port)
 	listner, err := net.Listen("tcp", server_ip+ ":" +server_port)
 	if err != nil {
-		log.Fatalf("failed to start server on : %v", err)
+		log.Fatalf("failed to start server on : %v\n", err)
 	}
 	s := grpc.NewServer()
 	pb.RegisterUploadServiceServer(s, &server{})
-	log.Printf("server listening at %v", listner.Addr())
+	log.Printf("server listening at %v\n", listner.Addr())
 	if err := s.Serve(listner); err != nil {
 		log.Fatalf("Failer to server GRPC %v", err)
 	}
