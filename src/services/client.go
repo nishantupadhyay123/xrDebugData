@@ -171,6 +171,8 @@ func  doStreamProtoBufPlainText(c pb.UploadServiceClient){
 		}
 		process_data := []*datapb.ProcessTrace{}
 		for {
+			//control from client side to send the buffer length
+			// need to build server side cle
 			buffer := make([]byte,BufferSize)
 			bytesread, err := file.Read(buffer)
 			if err!= nil {
@@ -226,7 +228,7 @@ func ReadDirectory(dir string) ([]string , error) {
 	var files []string
 	f, err := os.Open(dir)
 	if err != nil {
-		log.Fatalf("The directory doesnt exist or not accessible %v", err)
+		log.Fatalf("The directory doesnt exist or not accessible %v\n", err)
 		return files, err
 	}
 	fileInfo, err := f.Readdir(-1)
@@ -266,9 +268,9 @@ func main() {
 	fmt.Printf("Created client")
 
 	// Simple message
-	doStream(c)
-	// Send file
-	doStreamFile(c) 
+	// doStream(c)
+	// // // Send file
+	// doStreamFile(c) 
 
 	// sent thru protobuf a text file.
 	doStreamProtoBufPlainText(c)
