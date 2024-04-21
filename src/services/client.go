@@ -1,15 +1,18 @@
 package main
 
 import (
+	// "bytes"
 	"context"
+	// "encoding/gob"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"time"
 
-	pb "github.com/nishantupadhyay123/xrDebugData/src/xrbinarysrvpb"
+	"github.com/golang/protobuf/proto"
 	datapb "github.com/nishantupadhyay123/xrDebugData/src/xrbinarypb"
+	pb "github.com/nishantupadhyay123/xrDebugData/src/xrbinarysrvpb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -24,6 +27,10 @@ import (
 
 //Red the bytes in 4k size only for efficiency
 const BufferSize = 500
+
+//this is sample code.
+const LC = "RP"
+
 
 
 func doStream(c pb.UploadServiceClient){
@@ -107,7 +114,7 @@ func  doStreamFile(c pb.UploadServiceClient){
 		for _,req := range requests{
 			log.Printf("Sending req: %v\n", req.Reqid)
 			stream.Send(req)
-			time.Sleep(10 * time.Millisecond)
+			time.Sleep(5 * time.Millisecond)
 		}
 		res, err := stream.CloseAndRecv()
 		if err!=nil{
@@ -118,7 +125,102 @@ func  doStreamFile(c pb.UploadServiceClient){
 }
 
 
-func ReadDirectory (dir string) ([]string , error) {
+func  doStreamProtoBufPlainText(c pb.UploadServiceClient){
+	log.Printf("Sending messahge")
+
+	filepath := "/Users/niupadhy/Documents/Study/Prep/godownload"
+	files, err := ReadDirectory(filepath)
+	if err != nil {
+		log.Fatalf("No files found or directory %v\n", err)
+	}
+	log.Print(files)
+	for _,file := range files {
+		log.Printf("Sending file %v\n", file)
+		file, err := os.Open(file)
+		if err != nil {
+			log.Print("failed to open file %v : %v\n", file, err)
+			continue
+		}
+		defer file.Close()
+
+		//May be needed to create  a parallel send.
+		// filestat, err := file.Stat()
+		filesize, err := file.Stat()
+		if err != nil {
+			log.Print("not able to get data bout file")
+		}
+		//for information purposes.
+		log.Printf("Size of the %v :%v",file.Name(), filesize.Size())
+
+		/*
+		Create the Protobuff data 
+		*/
+		data := &datapb.XrDebugData{}
+		host, err := os.Hostname()
+		if err != nil {
+			log.Print("couldnt identify the hostname \n")
+		}
+		data.HostId = &datapb.XrDebugData_HostName{
+			HostName: host,
+		}
+		data.StreamId = "testcase1"
+		data.MsgType = datapb.XrDebugData_LTRACE
+		data.Ltrace = &datapb.XrLtrace{}
+		data.Ltrace.Node = &datapb.XrLtrace_NodeName{
+			NodeName: LC,
+		}
+		process_data := []*datapb.ProcessTrace{}
+		for {
+			buffer := make([]byte,BufferSize)
+			bytesread, err := file.Read(buffer)
+			if err!= nil {
+				if err != io.EOF {
+					log.Println(err)
+				}
+				break
+			}
+			x := datapb.ProcessTrace{
+				EventType: "Something",
+				Data: &datapb.ProcessTrace_MsgData{
+					MsgData : buffer[:bytesread],
+				},
+			}
+			process_data = append(process_data, &x)
+		}
+		data.Ltrace.Ltrace = process_data
+		/*
+		end of the Protobuf send.
+		*/
+		// log.Printf("value is %v", data)
+		byteData,err := proto.Marshal(data)
+		if err !=nil{
+			log.Fatalf("Couldnt marshal the data %v", err)
+		}
+
+		// var to_Send bytes.Buffer
+		// enc := gob.NewEncoder(&to_Send)
+		// err := enc.Encode(*data)
+
+
+		// /*create the server side proto*/
+		y := &pb.XrDebugRequest{
+			Reqid: 1,
+			Data: byteData,
+			Errors: "None",
+			Decoder: "Ltrace Data",
+		}
+
+		stream,err := c.UploadRequest(context.Background())
+		stream.Send(y)
+		res, err := stream.CloseAndRecv()
+		if err!=nil{
+			log.Fatalf("Error in sending \n ")
+		}
+		log.Printf("Returned status is %v",res)
+}
+}
+
+func ReadDirectory(dir string) ([]string , error) {
 	// Doesn't support file walk in sub-directory structure.
 	// Should use filepath.walk.
 	var files []string
@@ -169,7 +271,7 @@ func main() {
 	doStreamFile(c) 
 
 	// sent thru protobuf a text file.
-	// doStreamProtoBufPlainText(c)
+	doStreamProtoBufPlainText(c)
 
 	// //stringZippedFile in protbuf
 	// doStreamProtoBufPlainZip(c)
