@@ -83,7 +83,7 @@ func main () {
 	if err != nil {
 		log.Fatalf("failed to start server on : %v\n", err)
 	}
-	s := grpc.NewServer()
+	s := grpc.NewServer(grpc.MaxRecvMsgSize(1024*1024*32))
 	pb.RegisterUploadServiceServer(s, &server{})
 	log.Printf("server listening at %v\n", listner.Addr())
 	if err := s.Serve(listner); err != nil {

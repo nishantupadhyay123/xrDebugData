@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-* xr_debu_client - XR debug data TCP client
+* xr_debug_client - XR debug data TCP client
 * Author : Nishant Upadhyay
 * Arpil 2024,Copyright (c) 2016 by Cisco Systems, Inc.
 * ----------------------------------------------------------------------------

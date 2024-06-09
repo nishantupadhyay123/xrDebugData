@@ -40,16 +40,14 @@ enum message_type {
     LTRACE = 1 ;
     SYSLOG = 2 ;
     SHOWTECH = 3 ;
-    // decoder 
-    // binary
+    SNAPSHOT = 4 ;
 }
 
 // Message type is defined as the data for which different decoding mechansim 
 // can be applied at client
 message_type msg_type = 4;
-
 XrLtrace ltrace = 5; 
-
+XrSnapshot snapshot = 6;
 }
 
 message XrLtrace {
@@ -72,13 +70,6 @@ message ProcessTrace {
     }
 }
 
-
-//1. code generate 
-//  1.1 for go first -- DONE
-//  1.2 for cplus -- DONE
-//2. server and client read from disk , trasnmit , receiver and write to disk.(TCP)-- IN PROGRESS.
-//3. how to plumb this in XR 
-//4. how to plumb this in telegraf or standaline pipeline
-
-// 30 days fireX standard 
-//  Cafy apps and backend and run logs.
+message XrSnapshot {
+    bytes data = 1;
+}
